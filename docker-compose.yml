@@ -1,0 +1,28 @@
+services:
+  chatbot:
+    image: nginx:latest
+    container_name: chatbot
+    ports:
+      - "8091:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  
+      - ./frontend/:/usr/share/nginx/html/
+    networks:
+      - llama-network 
+
+  llama-server:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    container_name: llama-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./models:/models
+    command: >
+      -m /models/mistral-7b-instruct-v0.1.Q4_K_M.gguf
+    networks:
+      - llama-network 
+
+networks:
+  llama-network:
+    name: llama-network
+
